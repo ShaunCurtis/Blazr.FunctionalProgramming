@@ -59,21 +59,21 @@ static Null<double> TryParseToDouble(string? value)
     return NullT.NoValue<double>();
 }
 
-static Bool<double> TryParseAsDouble(string? value)
+static Return<double> TryParseAsDouble(string? value)
 {
     if (double.TryParse(value, out double result))
-        return BoolT.Read(result);
+        return ReturnT.Read(result);
 
-    return Bool<double>.Failure();
+    return Return<double>.Failure();
 }
 
-static async Task<Bool<double>> TryParseAsDoubleAsync(string? value)
+static async Task<Return<double>> TryParseAsDoubleAsync(string? value)
 {
     await Task.Delay(3000);
     if (double.TryParse(value, out double result))
-        return BoolT.Read(result);
+        return ReturnT.Read(result);
 
-    return Bool<double>.Failure();
+    return Return<double>.Failure();
 }
 
 public static class ConsoleReader
@@ -81,8 +81,8 @@ public static class ConsoleReader
     public static Null<string?> ReadLine()
         => NullT.Read(Console.ReadLine());
 
-    public static Bool<string?> ReadInput()
-       => Bool<string?>.Read(Console.ReadLine());
+    public static Return<string?> ReadInput()
+       => Return<string?>.Read(Console.ReadLine());
 }
 
 public static class Extensions

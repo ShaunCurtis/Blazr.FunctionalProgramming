@@ -7,4 +7,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Containors\OLd\**" />
+    <EmbeddedResource Remove="Containors\OLd\**" />
+    <None Remove="Containors\OLd\**" />
+  </ItemGroup>
+
 </Project>

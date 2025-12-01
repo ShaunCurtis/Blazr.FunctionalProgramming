@@ -7,10 +7,10 @@ namespace Blazr.FunctionalProgramming
 {
     public static class DataProvider
     {
-        public static async Task<Bool<double>> GetDataAsync()
+        public static async Task<Return<double>> GetDataAsync()
         {
             await Task.Delay(2000); // Simulate async data fetching
-            return BoolT.Read((double) Random.Shared.Next(2,100));
+            return ReturnT.Read((double) Random.Shared.Next(2,100));
         }
     }
 }

@@ -5,43 +5,43 @@
 /// ============================================================
 namespace Blazr.Manganese;
 
-public static class BoolTAsyncExtensions
+public static class ReturnTAsyncExtensions
 {
-    extension<T, TOut>(Bool<T> @this)
+    extension<T, TOut>(Return<T> @this)
     {
-        public async Task<Bool<TOut>> BindAsync(Func<T, Task<Bool<TOut>>> function)
+        public async Task<Return<TOut>> BindAsync(Func<T, Task<Return<TOut>>> function)
             => @this.HasValue
                 ? await function(@this.Value!).ContinueWith(CheckForTaskException)
-                : Bool<TOut>.Failure(@this.Exception!);
+                : Return<TOut>.Failure(@this.Exception!);
 
-        public async Task<Bool<TOut>> MapAsync(Func<T, Task<TOut>> function)
+        public async Task<Return<TOut>> MapAsync(Func<T, Task<TOut>> function)
             => @this.HasValue
                 ? await function(@this.Value!).ContinueWith(CheckForTaskException)
-                : Bool<TOut>.Failure(@this.Exception!);
+                : Return<TOut>.Failure(@this.Exception!);
     }
 
-    extension<T, TOut>(Task<Bool<T>> @this)
+    extension<T, TOut>(Task<Return<T>> @this)
     {
-        public async Task<Bool<TOut>> BindAsync(Func<T, Task<Bool<TOut>>> function)
+        public async Task<Return<TOut>> BindAsync(Func<T, Task<Return<TOut>>> function)
             => await (await @this.ContinueWith(CheckForTaskException))
                 .BindAsync(function);
 
-        public async Task<Bool<TOut>> MapAsync(Func<T, Task<TOut>> function)
+        public async Task<Return<TOut>> MapAsync(Func<T, Task<TOut>> function)
             => await (await @this.ContinueWith(CheckForTaskException))
                 .MapAsync(function);
     }
 
-    extension<T, TOut>(Task<Bool<T>> @this)
+    extension<T, TOut>(Task<Return<T>> @this)
     {
-        public async Task<Bool<TOut>> BindAsync(Func<T, Bool<TOut>> function)
+        public async Task<Return<TOut>> BindAsync(Func<T, Return<TOut>> function)
             => (await @this.ContinueWith(CheckForTaskException))
                 .Bind(function);
 
-        public async Task<Bool<TOut>> MapAsync(Func<T, TOut> function)
+        public async Task<Return<TOut>> MapAsync(Func<T, TOut> function)
             => (await @this.ContinueWith(CheckForTaskException))
                 .Map<T, TOut>(function);
 
-        public async Task<Bool<TOut>> TryMapAsync(Func<T, TOut> function)
+        public async Task<Return<TOut>> TryMapAsync(Func<T, TOut> function)
             => (await @this.ContinueWith(CheckForTaskException))
                 .TryMap<T, TOut>(function);
 
@@ -59,15 +59,15 @@ public static class BoolTAsyncExtensions
 
     }
 
-    private static Bool<T> CheckForTaskException<T>(Task<T> @this)
+    private static Return<T> CheckForTaskException<T>(Task<T> @this)
         => @this.IsCompletedSuccessfully
-            ? BoolT.Read(@this.Result)
-            : Bool<T>.Failure(@this.Exception
+            ? ReturnT.Read(@this.Result)
+            : Return<T>.Failure(@this.Exception
                 ?? new Exception("The Task failed to complete successfully"));
 
-    private static Bool<T> CheckForTaskException<T>(Task<Bool<T>> @this)
+    private static Return<T> CheckForTaskException<T>(Task<Return<T>> @this)
     => @this.IsCompletedSuccessfully
         ? @this.Result
-        : Bool<T>.Failure(@this.Exception
+        : Return<T>.Failure(@this.Exception
             ?? new Exception("The Task failed to complete successfully"));
 }

@@ -5,34 +5,34 @@
 /// ============================================================
 namespace Blazr.Manganese;
 
-public static class BoolTExtensions
+public static class ReturnTExtensions
 {
-    extension<T>(Bool<T> @this)
+    extension<T>(Return<T> @this)
     {
-        public Bool<TOut> Bind<TOut>(Func<T, Bool<TOut>> function)
+        public Return<TOut> Bind<TOut>(Func<T, Return<TOut>> function)
             => @this.HasValue
                 ? function(@this.Value)
-                : Bool<TOut>.Failure(@this.Exception);
+                : Return<TOut>.Failure(@this.Exception);
 
-        public Bool<TOut> Map<TOut>(Func<T, TOut> function)
+        public Return<TOut> Map<TOut>(Func<T, TOut> function)
              => @this.HasValue
-                ? BoolT.Read(function.Invoke(@this.Value!)) 
-                    ?? Bool<TOut>.Failure(new BoolTException("The function returned a null value."))
-                : Bool<TOut>.Failure(@this.Exception!);
+                ? ReturnT.Read(function.Invoke(@this.Value!)) 
+                    ?? Return<TOut>.Failure(new ReturnTException("The function returned a null value."))
+                : Return<TOut>.Failure(@this.Exception!);
 
 
-        public Bool<TOut> TryMap<TOut>(Func<T, TOut> function)
+        public Return<TOut> TryMap<TOut>(Func<T, TOut> function)
         {
             try
             {
                 return @this.HasValue
-                    ? BoolT.Read(function.Invoke(@this.Value)) 
-                            ?? Bool<TOut>.Failure(new BoolTException("The function returned a null value."))
-                    : Bool<TOut>.Failure(@this.Exception);
+                    ? ReturnT.Read(function.Invoke(@this.Value)) 
+                            ?? Return<TOut>.Failure(new ReturnTException("The function returned a null value."))
+                    : Return<TOut>.Failure(@this.Exception);
             }
             catch (Exception ex)
             {
-                return Bool<TOut>.Failure(ex);
+                return Return<TOut>.Failure(ex);
             }
         }
 
