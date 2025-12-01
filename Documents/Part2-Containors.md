@@ -1,18 +1,20 @@
 # C# Containors
 
-Containers are a powerful *Functional Programming* building block.
+Containers are a coding pattern, a powerful *Functional Programming* building block.
 
-A contain can be expressed like this:
+They deserve a category to themselves, so let me introduce the **Containor Pattern**.
+
+A containor can be expressed like this:
 
 ```csharp
 Containor<T>
 ```
 
-They have no universal name: *Wrapper*, *Kind*, *Higher Order Kind*, *Higher Order Objects*, *Lifted Objects*, *Elevated Objects*,....  The problem with articles, is authors fail to devote enough time to them and often switch naming conventions mid-srticle.
+Without a name, they're not univerally regarded as a *coding pattern*.  The are called: *Wrapper*, *Kind*, *Higher Order Kind*, *Higher Order Objects*, *Lifted Objects*, *Elevated Objects*,.... to quote just a few.  Authors fail to devote enough time to them, assume you already know about them, and often switch naming conventions mid-article.
 
-They are generic super-objects that wrap other objects.  I've invented a new term for them - **Containors**.  I'll use it from now on.
+They are generic super-objects that wrap other objects.  **Containor** is a term I inverted to describe them.  I'll use it from now on.
  
-You almost certainly use containers already:  `IEnumerable<T>` and `Task<T>` are *Containors*.
+You use containers already:  `IEnumerable<T>` and `Task<T>` are *Containors*.
 
 The purpose of a *containor* is to provide some generic functionality regardless of the type.  `IEnumerable<T>` provides LINQ functionality regardless of `T`'s type.
 
@@ -24,7 +26,7 @@ public readonly record struct Containor<T> {...}
 public record Containor<T> {...}
 ```
 
-The choice depends on the functionality required.  My rule use a `struct` unless...
+The choice depends on the functionality required.  My rule is: `struct` by default.
 
 The skeleton `Containor` object:
 
@@ -84,7 +86,7 @@ Containor<string?>
 
 `Console.WriteLine(string)` matches the `Write` pattern.  `T` is qualified in `Write` because the compiler doesn't know which `Console.WriteLine` overload to use.
 
-A factory class for `Containor<T>` simplifies the constructors:
+A `Containor<T>` factory class simplifies the constructors:
 
 ```csharp
 public static class Containor
@@ -108,5 +110,5 @@ Containor
 
 That's it for this article.
 
-In the next, I'll show how to add some *FP* functionality to the `Containor`.
+In the next, I'll show how to add some real *FP* functionality to the `Containor`.
 

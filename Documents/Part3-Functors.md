@@ -1,16 +1,16 @@
 # C# The Functor Pattern
 
-In coding a *Functor* is a function that takes a function in the `T => TOut` form as it's input.
+In coding terms, a *Functor* is a method that takes a function in the `T => TOut` form as it's input and applies it to the stored instance of `T`.  By general convention the method is called `Map`.
 
-In the `Containor` object context it can be defined like this:
+In the `Containor` context it can be defined like this:
 
 ```csharp
 public Containor<TOut> Map(Func<T, TOut> func);
 ```
 
-It maps a standard function, such as `Math.Sqrt(double)`, that takes a `T` instance as input and returns an instance of `TOut`.  `T` and `TOut` may be the same type.  Many of the functions we use or write fit this pattern.
+It maps a standard function, such as `Math.Sqrt(double)`.  `T` and `TOut` may be the same type.  Many of the functions we use or write fit this pattern.
 
-The Functor implementation in the `Containor` context :
+The Functor implementation in the `Containor` context:
 
 ```csharp
 public Containor<TOut> Map<TOut>(Func<T, TOut> func)
@@ -25,19 +25,17 @@ Functor.Read(Console.ReadLine)
     .Write<double>(Console.WriteLine);
 ```
 
-Note the llambda expression to handle the nullable string type returned by `Console.Write`.
+Note the llambda expression to handle nullables.
 
-There is, however, a fundimental flaw in this code: `double.Parse` raises and exception if it can't parse the input.
+There is, however, a fundimental flaw in this code: `double.Parse` will raise an exception if it can't parse the input.
 
 Using a `try` will work, but what does `Map` return if it catches an exception.
 
-We need a new containor to handle this.
+We need a new, more powerful, containor to handle this.
 
 ## `Null<T>`
 
-The code is basically the same with added extras.
-
-The key difference is it now has two states:
+The key new feature is two states:
 
 1. HasValue - True
 2. HasNoValue - False
@@ -131,12 +129,11 @@ Now to the try problem.
 ```csharp
     public Null<TOut> TryMap<TOut>(Func<T, TOut> func)
     {
-        if (!HasValue)
-            return new Null<TOut>();
-
         try
         {
-            return Null<TOut>.Read(func.Invoke(Value));
+            return this.HasValue
+                ? Null<TOut>.Read(func.Invoke(Value))
+                : new Null<TOut>();
         }
         catch
         {
@@ -152,6 +149,8 @@ NullT.Read(Console.ReadLine)
     .TryMap(double.Parse!)
     .Write(Console.WriteLine);
 ```
+
+## Chaining Functors
 
 Adding more steps to the process is simple and demonstrates the power of `Map`:
 

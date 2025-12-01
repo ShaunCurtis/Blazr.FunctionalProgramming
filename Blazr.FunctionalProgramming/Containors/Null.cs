@@ -3,7 +3,9 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
+using Blazr.Manganese;
 using System.Diagnostics.CodeAnalysis;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Blazr.Containors;
 
@@ -62,12 +64,11 @@ public readonly record struct Null<T>
 
     public Null<TOut> TryMap<TOut>(Func<T, TOut> func)
     {
-        if (!HasValue)
-            return new Null<TOut>();
-
         try
         {
-            return Null<TOut>.Read(func.Invoke(Value));
+            return this.HasValue
+                ? Null<TOut>.Read(func.Invoke(Value))
+                : new Null<TOut>();
         }
         catch
         {
