@@ -6,19 +6,19 @@ Each article is short and focused on a specific topic, making it easy to follow 
 
 ## Getting Started
 
-[Part 1: Introduction to Functional Programming](documents/Part1-Introduction.md)
+[Part 1: Introduction to Functional Programming](Documents/Part1-Introduction.md)
 
-[Part 2: Containors](documents/Part2-Containors.md)
+[Part 2: Containors](Documents/Part2-Containors.md)
  
-[Part 3: Functors](documents/Part3-Functors.md)
+[Part 3: Functors](Documents/Part3-Functors.md)
 
-[Part 4: Monadic-Functions](documents/Part4-Monadic-Functions.md)
+[Part 4: Monadic-Functions](Documents/Part4-Monadic-Functions.md)
 
-[Part 5: Extensions](documents/Part5-Extensions.md)
+[Part 5: Extensions](Documents/Part5-Extensions.md)
 
-[Part 6: BoolT](documents/Part6-BoolT.md)
+[Part 6: BoolT](Documents/Part6-BoolT.md)
 
-[Part 7: BoolT Async](documents/Part7-BoolTASync.md)
+[Part 7: BoolT Async](Documents/Part7-BoolTASync.md)
 
 
 
