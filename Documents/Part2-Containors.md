@@ -1,8 +1,10 @@
 # C# Containors
 
-Containers are a coding pattern, a powerful *Functional Programming* building block.
+Strangely, there's a hidden pattern in the *Functional Programming* toolkit.
 
-They deserve a category to themselves, so let me introduce the **Containor Pattern**.
+Called *Wrapper*, *Kind*, *Higher Order Kind*, *Higher Order Objects*, *Lifted Objects*, *Elevated Objects*,.... to quote just a few, authors fail to devote enough time to them.  They assume you already know about them, and often switch naming conventions mid-article just to provide more confusion.
+
+This article introduces you to the pattern, giving it a name you can remember and use:  **The Containor Pattern**.
 
 A containor can be expressed like this:
 
@@ -10,11 +12,9 @@ A containor can be expressed like this:
 Containor<T>
 ```
 
-Without a name, they're not univerally regarded as a *coding pattern*.  The are called: *Wrapper*, *Kind*, *Higher Order Kind*, *Higher Order Objects*, *Lifted Objects*, *Elevated Objects*,.... to quote just a few.  Authors fail to devote enough time to them, assume you already know about them, and often switch naming conventions mid-article.
-
-They are generic super-objects that wrap other objects.  **Containor** is a term I inverted to describe them.  I'll use it from now on.
+It's a generic super-object that wrap other objects.
  
-You use containers already:  `IEnumerable<T>` and `Task<T>` are *Containors*.
+You use them already:  `IEnumerable<T>` and `Task<T>` are *Containors*.
 
 The purpose of a *containor* is to provide some generic functionality regardless of the type.  `IEnumerable<T>` provides LINQ functionality regardless of `T`'s type.
 
@@ -42,9 +42,7 @@ public readonly record struct Containor<T>
 
 Whether you hide or expose `Value` depends on the functionality you want to provide and the context in which you're writing the code.
 
-Next we need to provide some I/O functionality.
-
-I'm a fan of the *Read/Write* paradigm, so I add basic I/O like this:
+Next we need to provide some I/O functionality.  I like the *Read/Write* paradigm, so I add basic I/O like this:
 
 ```csharp
 public static Containor<T> Read(T value)
@@ -65,9 +63,7 @@ public void Write<TOut>(Action<T> action)
     => action.Invoke(this.Value);
 ```
 
-These two methods add a new dimension to the I/O. They accept functions as arguments. 
-
-`Read` can receive any method matching the `Func<T>` pattern.
+These two methods add a new dimension to the I/O. They accept functions as arguments.  `Read` can receive any method matching the `Func<T>` pattern.
 
 We can write:
 
@@ -110,5 +106,5 @@ Containor
 
 That's it for this article.
 
-In the next, I'll show how to add some real *FP* functionality to the `Containor`.
+Next, I'll show how to add some real *FP* functionality to the `Containor`.
 

@@ -1,6 +1,6 @@
 # C# The Functor Pattern
 
-In coding terms, a *Functor* is a method that takes a function in the `T => TOut` form as it's input and applies it to the stored instance of `T`.  By general convention the method is called `Map`.
+In coding terms, a *Functor* is a method that takes a `T => TOut` function as it's input.  The *containor* applies the function to it's internal value and returns a new *containor* instance of `TOut`.  The method is normally called `Map`.
 
 In the `Containor` context it can be defined like this:
 
@@ -27,20 +27,16 @@ Functor.Read(Console.ReadLine)
 
 Note the llambda expression to handle nullables.
 
-There is, however, a fundimental flaw in this code: `double.Parse` will raise an exception if it can't parse the input.
-
-Using a `try` will work, but what does `Map` return if it catches an exception.
-
-We need a new, more powerful, containor to handle this.
+There is, however, a fundimental flaw in this code: `double.Parse` will raise an exception if it can't parse the input.  Using a `try` will work, but what does `Map` return if it catches an exception.  We need a new, more powerful, containor to handle this.
 
 ## `Null<T>`
 
-The key new feature is two states:
+`NullT` has two states:
 
 1. HasValue - True
 2. HasNoValue - False
 
-The core object:
+The core object and new constructor:
 
 ```csharp
 public readonly record struct Null<T>
