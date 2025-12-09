@@ -1,24 +1,24 @@
 # C# Containors
 
-Strangely, there's a hidden pattern in the *Functional Programming* toolkit.
+Containers are a pattern in the C# *Functional Programming* toolkit.
 
-Called *Wrapper*, *Kind*, *Higher Order Kind*, *Higher Order Objects*, *Lifted Objects*, *Elevated Objects*,.... to quote just a few, authors fail to devote enough time to them.  They assume you already know about them, and often switch naming conventions mid-article just to provide more confusion.
+They get given all sorts of names: *Wrapper*, *Kind*, *Higher Order Kind*, *Higher Order Objects*, *Lifted Objects*, *Elevated Objects*,.... to quote but a few.  Most authors assume you already know about it, devote too little explaining what they are.
 
-This article introduces you to the pattern, giving it a name you can remember and use:  **The Containor Pattern**.
+This article does't make that mistake.  I give it a name you can remember:  **The Containor Pattern**, and the attention it deserves.
 
-A containor can be expressed like this:
+A *containor* can be expressed like this:
 
 ```csharp
 Containor<T>
 ```
 
-It's a generic super-object that wrap other objects.
+It's a generic super-object that wraps around another object.
  
 You use them already:  `IEnumerable<T>` and `Task<T>` are *Containors*.
 
-The purpose of a *containor* is to provide some generic functionality regardless of the type.  `IEnumerable<T>` provides LINQ functionality regardless of `T`'s type.
+The purpose of the *containor* is to provide some generic functionality regardless of the type of `T`.  `IEnumerable<T>` provides LINQ functionality regardless of `T`'s type.
 
-In *FP* objects are immutable, so we can define a *Containor* like this:
+*FP* objects are immutable, so a *Containor* can be defined like this:
 
 ```csharp
 public readonly record struct Containor<T> {...}
@@ -26,7 +26,7 @@ public readonly record struct Containor<T> {...}
 public record Containor<T> {...}
 ```
 
-The choice depends on the functionality required.  My rule is: `struct` by default.
+The choice depends on the functionality required.  My rule is `struct` by default.
 
 The skeleton `Containor` object:
 
@@ -40,7 +40,7 @@ public readonly record struct Containor<T>
 }
 ```
 
-Whether you hide or expose `Value` depends on the functionality you want to provide and the context in which you're writing the code.
+Hide or expose `Value` depending on the functionality required..
 
 Next we need to provide some I/O functionality.  I like the *Read/Write* paradigm, so I add basic I/O like this:
 
@@ -52,7 +52,9 @@ public T Write()
     => this.Value;
 ```
 
-So far, normal *OOP* code.  But now some *FP* style I/O:
+So far, just normal *OOP* code.  
+
+Now some *FP* style I/O:
 
 
 ```csharp
@@ -70,9 +72,9 @@ We can write:
 ```csharp
 Containor<string?>.Read(Console.ReadLine)
 ```
-Which reads a line from the console and wraps it in a `Containor<string?>`.  We're passing the `Console.ReadLine` method as a delegate to the `Read` method. Treating functions as first class citizens.
+Which reads a line from the console and wraps it in a `Containor<string?>`.  We pass the `Console.ReadLine` method as a delegate to the `Read` method. Functions become as first class citizens.
 
-This new I/O lets us write this simple console app:
+With this new I/O, we can write this simple console app:
 
 ```csharp
 Containor<string?>
