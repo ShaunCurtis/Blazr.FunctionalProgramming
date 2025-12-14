@@ -1,10 +1,10 @@
 # C# Containors
 
-Containers are a pattern in the C# *Functional Programming* toolkit.
+Containers are a coding pattern: a fundimental building block in the C# *Functional Programming* toolkit.
 
-They get given all sorts of names: *Wrapper*, *Kind*, *Higher Order Kind*, *Higher Order Objects*, *Lifted Objects*, *Elevated Objects*,.... to quote but a few.  Most authors assume you already know about it, devote too little explaining what they are.
+They get given all sorts of names: *Wrapper*, *Kind*, *Higher Order Kind*, *Higher Order Objects*, *Lifted Objects*, *Elevated Objects*,.... to quote but a few.  Most authors assume you already know what one is, and therefore devote too little explaining what they are.
 
-This article does't make that mistake.  I give it a name you can remember:  **The Containor Pattern**, and the attention it deserves.
+This article does't make that mistake.  A new name you can remember:  **The Containor Pattern**, and an explanation of what it does.
 
 A *containor* can be expressed like this:
 
@@ -12,11 +12,11 @@ A *containor* can be expressed like this:
 Containor<T>
 ```
 
-It's a generic super-object that wraps around another object.
+It's a generic super-object that provides generic functionality regardless of the inner `T` type.
  
 You use them already:  `IEnumerable<T>` and `Task<T>` are *Containors*.
 
-The purpose of the *containor* is to provide some generic functionality regardless of the type of `T`.  `IEnumerable<T>` provides LINQ functionality regardless of `T`'s type.
+`IEnumerable<T>` provides LINQ functionality regardless of `T`'s type.
 
 *FP* objects are immutable, so a *Containor* can be defined like this:
 
@@ -26,7 +26,7 @@ public readonly record struct Containor<T> {...}
 public record Containor<T> {...}
 ```
 
-The choice depends on the functionality required.  My rule is `struct` by default.
+The choice depends on the functionality required.  My rule is: `struct` by default.
 
 The skeleton `Containor` object:
 
