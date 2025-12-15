@@ -2,7 +2,7 @@
 
 Containers are a coding pattern: a fundimental building block in the C# *Functional Programming* toolkit.
 
-They get given all sorts of names: *Wrapper*, *Kind*, *Higher Order Kind*, *Higher Order Objects*, *Lifted Objects*, *Elevated Objects*,.... to quote but a few.  Most authors assume you already know what one is, and therefore devote too little explaining what they are.
+They get given all sorts of names: *Wrapper*, *Kind*, *Higher Order Kind*, *Higher Order Objects*, *Lifted Objects*, *Elevated Objects*,.... to quote but a few.  Most authors assume you already know all about them, and therefore devote too little explaining what they are.
 
 This article does't make that mistake.  A new name you can remember:  **The Containor Pattern**, and an explanation of what it does.
 
@@ -42,7 +42,7 @@ public readonly record struct Containor<T>
 
 Hide or expose `Value` depending on the functionality required..
 
-Next we need to provide some I/O functionality.  I like the *Read/Write* paradigm, so I add basic I/O like this:
+Next it needs some I/O functionality.  I like the *Read/Write* paradigm, so I add basic I/O like this:
 
 ```csharp
 public static Containor<T> Read(T value)
@@ -65,14 +65,16 @@ public void Write<TOut>(Action<T> action)
     => action.Invoke(this.Value);
 ```
 
-These two methods add a new dimension to the I/O. They accept functions as arguments.  `Read` can receive any method matching the `Func<T>` pattern.
+These two methods add a new dimension to the I/O. They accept functions in the form of *delegates* as arguments. `Func` and `Action` are two generic *delegates* built into C#: examples of the *FP* paradigm creeping into the language.
+
+`Read` can receive any method matching the `Func<T>` pattern.
 
 We can write:
 
 ```csharp
 Containor<string?>.Read(Console.ReadLine)
 ```
-Which reads a line from the console and wraps it in a `Containor<string?>`.  We pass the `Console.ReadLine` method as a delegate to the `Read` method. Functions become as first class citizens.
+Which reads a line from the console and wraps it in a `Containor<string?>`.  We pass the `Console.ReadLine` method as a delegate to the `Read` method. Functions become as first class citizens.  They are values: you can pass them around and store them in variables.
 
 With this new I/O, we can write this simple console app:
 
@@ -108,5 +110,5 @@ Containor
 
 That's it for this article.
 
-Next, I'll show how to add some real *FP* functionality to the `Containor`.
+Next, I'll show how to add *FP* functionality to the `Containor`.
 

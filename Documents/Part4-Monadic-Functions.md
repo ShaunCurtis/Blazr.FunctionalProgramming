@@ -22,7 +22,7 @@ public NullableContainor<TOut> Bind<TOut>(Func<T, NullableContainor<TOut>> func)
         : new NullableContainor<TOut> { HasValue = false };
 ```
 
-In the previous article I addressed the `double.Parse` issue with `TryMap.`  This works, but it generates costly exceptions.  There's `double.TryParse` that's more efficient, but a horrible bit of code, spouting results at both ends.  One solution is to wrap it in a *Manadic Function* like this:
+In the previous article I addressed the `double.Parse` issue with `TryMap.`  This works, but it generates costly exceptions.  `double.TryParse` is more efficient, but a horrible bit of code, spouting results at both ends.  One solution is to wrap it in a *Manadic Function* like this:
 
 ```csharp
 static NullableContainor<double> TryParseToDouble(string? value)
@@ -34,7 +34,7 @@ static NullableContainor<double> TryParseToDouble(string? value)
 }
 ```
 
-This now handles the nullable input string and wraps the `TryParse` in a more elegant solution.
+This now handles the nullable input string and wraps the `TryParse` more elegantly.
 
 The console app:
 
@@ -45,3 +45,5 @@ NullableContainor.Read(Console.ReadLine)
     .Map(value => Math.Round(value, 2))
     .Write(Console.WriteLine);
 ```
+
+That's it, really.  `Nullable<T>` is a *Monad*: it implements the *Monadic Function* pattern.  The pattern unwraps a lot of powerful coding options, that you will learn later.

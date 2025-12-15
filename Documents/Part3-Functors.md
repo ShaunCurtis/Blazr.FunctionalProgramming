@@ -1,6 +1,6 @@
 # C# The Functor Pattern
 
-In coding terms, a *Functor* is a method that takes a `T => TOut` function as it's input.  The *containor* applies the function to it's internal value and returns a new *containor* instance of `TOut`.  The method is normally called `Map`.
+In coding terms, a *Functor* is a method that takes a `T => TOut` function as it's input.  The *containor* applies the function to it's internal value and returns a new *containor* instance of `TOut`.  The *Functor* method is normally called `Map`.
 
 In the `Containor` context it can be defined like this:
 
@@ -10,7 +10,7 @@ public Containor<TOut> Map(Func<T, TOut> func);
 
 It maps a standard function, such as `Math.Sqrt(double)`.  `T` and `TOut` may be the same type.  Many of the functions we use or write fit this pattern.
 
-The Functor implementation in the `Containor` context:
+The `Map` implementation in the `Containor` context:
 
 ```csharp
 public Containor<TOut> Map<TOut>(Func<T, TOut> func)
@@ -27,7 +27,7 @@ Functor.Read(Console.ReadLine)
 
 Note the llambda expression to handle nullables.
 
-There is, however, a fundimental flaw in this code: `double.Parse` will raise an exception if it can't parse the input.  Using a `try` will work, but what does `Map` return if it catches an exception.  We need a new, more powerful, containor to handle this.
+Ok so far, but code contains a flaw: `double.Parse` will raise an exception if it can't parse the input.  Using a `try` will work, but what does `Map` return if it catches an exception.  We need a new, more powerful, containor to handle this scenario.
 
 ## `Null<T>`
 
@@ -35,6 +35,8 @@ There is, however, a fundimental flaw in this code: `double.Parse` will raise an
 
 1. HasValue - True
 2. HasNoValue - False
+
+First build a `Null<T>` based on `Containor`.
 
 The core object and new constructor:
 
@@ -138,7 +140,7 @@ Now to the try problem.
     }
 ```
 
-And the console app:
+We can now refactor the console app:
 
 ```csharp
 NullT.Read(Console.ReadLine)
@@ -157,3 +159,5 @@ NullT.Read(Console.ReadLine)
     .Map(value => Math.Round(value, 2))
     .Write(Console.WriteLine);
 ```
+
+Next, *Monads*!.
