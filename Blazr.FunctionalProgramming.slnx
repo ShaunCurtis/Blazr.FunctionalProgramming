@@ -1,11 +1,12 @@
 <Solution>
   <Folder Name="/Documents/">
     <File Path="Documents/Part1-Introduction.md" />
-    <File Path="Documents/Part2-Containors.md" />
-    <File Path="Documents/Part3-Functors.md" />
-    <File Path="Documents/Part4-Monadic-Functions.md" />
-    <File Path="Documents/Part5-Extensions.md" />
+    <File Path="Documents/Part2-Fundimentals.md" />
+    <File Path="Documents/Part3-Containors.md" />
+    <File Path="Documents/Part4-Functors.md" />
+    <File Path="Documents/Part5-Monadic-Functions.md" />
     <File Path="Documents/Part6-BoolT.md" />
+    <File Path="Documents/Part6-Extensions.md" />
     <File Path="Documents/Part7- BoolTAsync.md" />
   </Folder>
   <Folder Name="/Solution Items/">

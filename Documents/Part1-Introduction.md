@@ -41,3 +41,12 @@ That's it with the M word (and all the jargon) for a while.
 
 Let's head to the shallow end and *containers*.
 
+### Good Reference Material:
+
+ - [Functional Programming Patterns](https://softwarepatternslexicon.com/c-sharp/functional-programming-patterns/)
+ - [Functional Programming in C#](https://www.syntacticsugardaddy.com/blog/functional-programming-in-csharp)
+
+
+
+
+

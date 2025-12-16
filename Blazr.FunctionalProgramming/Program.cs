@@ -2,6 +2,18 @@
 using Blazr.FunctionalProgramming;
 using Blazr.Manganese;
 
+Func<string, double> parser = Double.Parse;
+Func<double, double> squarer = Math.Sqrt;
+Func<double, double> doubler = value => value + value;
+
+Func<string, double> doitall = x => squarer(doubler(parser(x)));
+
+var x = doubler(2);
+//var consoleResult = doitall(Console.ReadLine()!);
+Action readAndWrite = () => Console.WriteLine(doitall(Console.ReadLine()!));
+
+readAndWrite();
+
 //var inputContainer = Containor<string?>.Read(Console.ReadLine);
 
 //Containor<string?>.Read(Console.ReadLine)
@@ -28,24 +40,24 @@ using Blazr.Manganese;
 //  .Write(Console.WriteLine);
 
 
-await DataProvider.GetDataAsync()
-  .MapAsync(Math.Sqrt)
-  .MapAsync(value => Math.Round(value, 2))
-  .WriteAsync(
-      hasValue: value => $"Success: The transformed value is: {value}",
-      hasNoValue: () => "The input value could not be parsed.",
-      hasException: ex => $"An error occurred: {ex.Message}")
-  .WriteAsync(Console.WriteLine);
+//await DataProvider.GetDataAsync()
+//  .MapAsync(Math.Sqrt)
+//  .MapAsync(value => Math.Round(value, 2))
+//  .WriteAsync(
+//      hasValue: value => $"Success: The transformed value is: {value}",
+//      hasNoValue: () => "The input value could not be parsed.",
+//      hasException: ex => $"An error occurred: {ex.Message}")
+//  .WriteAsync(Console.WriteLine);
 
 
-(await DataProvider.GetDataAsync())
-  .Map(Math.Sqrt)
-  .Map(value => Math.Round(value, 2))
-  .Write(
-      hasValue: value => $"Success: The transformed value is: {value}",
-      hasNoValue: () => "The input value could not be parsed.",
-      hasException: ex => $"An error occurred: {ex.Message}")
-  .Write(Console.WriteLine);
+//(await DataProvider.GetDataAsync())
+//  .Map(Math.Sqrt)
+//  .Map(value => Math.Round(value, 2))
+//  .Write(
+//      hasValue: value => $"Success: The transformed value is: {value}",
+//      hasNoValue: () => "The input value could not be parsed.",
+//      hasException: ex => $"An error occurred: {ex.Message}")
+//  .Write(Console.WriteLine);
 
 //NullableContainer.Read(Console.ReadLine)
 //    .TryMap(value => double.Parse(value ?? string.Empty))

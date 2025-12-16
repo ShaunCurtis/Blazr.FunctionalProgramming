@@ -13,4 +13,3 @@ public class ReturnTException : Exception
     public static ReturnTException Create(string message)
         => new (message);
 }
-|
