@@ -3,16 +3,13 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-using Blazr.Manganese;
 using System.Diagnostics.CodeAnalysis;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Blazr.Containors;
 
 public readonly record struct Null<T>
 {
-    [MemberNotNullWhen(true, nameof(Value))]
-    private bool HasValue { get; init; } = false;
+    [MemberNotNullWhen(true, nameof(Value))] private bool HasValue { get; init; } = false;
     private T? Value { get; init; } = default!;
 
     private Null(T? value)
@@ -28,7 +25,7 @@ public readonly record struct Null<T>
         => new Null<T>(Value);
 
     public static Null<T> Read(Func<T> input)
-        => new Null<T>(input.Invoke());
+            => new Null<T>(input.Invoke());
 
     public static Null<T> NoValue()
     => new Null<T>();
@@ -53,13 +50,13 @@ public readonly record struct Null<T>
             : hasNoValue.Invoke();
 
     public Null<TOut> Bind<TOut>(Func<T, Null<TOut>> func)
-        => HasValue 
-            ? func.Invoke(Value) 
+        => HasValue
+            ? func.Invoke(Value)
             : new Null<TOut> { HasValue = false };
 
     public Null<TOut> Map<TOut>(Func<T, TOut> func)
-        => HasValue 
-            ? Null<TOut>.Read(func.Invoke(Value)) 
+        => HasValue
+            ? Null<TOut>.Read(func.Invoke(Value))
             : new Null<TOut>();
 
     public Null<TOut> TryMap<TOut>(Func<T, TOut> func)

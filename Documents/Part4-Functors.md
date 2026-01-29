@@ -20,12 +20,12 @@ public Containor<TOut> Map<TOut>(Func<T, TOut> func)
 And the console app using double.Parse:
 
 ```csharp
-Functor.Read(Console.ReadLine)
+Containor.Read(Console.ReadLine)
     .Map(value => double.Parse(value ?? string.Empty))
     .Write<double>(Console.WriteLine);
 ```
 
-Note the llambda expression to handle nullables.
+Note the lambda expression to handle nullables.
 
 Ok so far, but code contains a flaw: `double.Parse` will raise an exception if it can't parse the input.  Using a `try` will work, but what does `Map` return if it catches an exception.  We need a new, more powerful, containor to handle this scenario.
 
@@ -45,6 +45,7 @@ public readonly record struct Null<T>
 {
     [MemberNotNullWhen(true, nameof(Value))]
     private bool HasValue { get; init; } = false;
+    
     private T? Value { get; init; } = default!;
 
     private Null(T? value)

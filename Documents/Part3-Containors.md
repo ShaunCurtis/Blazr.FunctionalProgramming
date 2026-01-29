@@ -6,29 +6,32 @@ They get given all sorts of names: *Wrapper*, *Kind*, *Higher Order Kind*, *High
 
 This article does't make that mistake.  A new name you can remember:  **The Containor Pattern**, and an explanation of what it does.
 
-A *containor* can be expressed like this:
+> A **Containor** abstracts a value into a generic object. 
+
+It can be expressed like this:
 
 ```csharp
 Containor<T>
 ```
 
-It's a generic super-object that provides generic functionality regardless of the inner `T` type.
- 
-You use them already:  `IEnumerable<T>` and `Task<T>` are *Containors*.
+Recognise this pattern?  `IEnumerable<T>` and `Task<T>` are *Containors*.
 
-`IEnumerable<T>` provides LINQ functionality regardless of `T`'s type.
+`IEnumerable<T>` provides LINQ functionality regardless of `T`'s type, `Task<T>` Provides asynchronous functionality.
 
-*FP* objects are immutable, so a *Containor* can be defined like this:
+*FP* objects are immutable, so a *Containor* is restricted to:
 
 ```csharp
 public readonly record struct Containor<T> {...}
-//or
+```
+or
+
+```csharp
 public record Containor<T> {...}
 ```
 
-The choice depends on the functionality required.  My rule is: `struct` by default.
+The choice depends on the functionality required.
 
-The skeleton `Containor` object:
+We can define a skeleton `Containor` object:
 
 ```csharp
 public readonly record struct Containor<T>
@@ -40,9 +43,9 @@ public readonly record struct Containor<T>
 }
 ```
 
-Hide or expose `Value` depending on the functionality required..
+Hide or expose `Value`?  It depends on the functionality required..
 
-Next it needs some I/O functionality.  I like the *Read/Write* paradigm, so I add basic I/O like this:
+Now we need some I/O functionality.  I like the *Read/Write* paradigm, so I add basic I/O like this:
 
 ```csharp
 public static Containor<T> Read(T value)
@@ -74,7 +77,7 @@ We can write:
 ```csharp
 Containor<string?>.Read(Console.ReadLine)
 ```
-Which reads a line from the console and wraps it in a `Containor<string?>`.  We pass the `Console.ReadLine` method as a delegate to the `Read` method. Functions become as first class citizens.  They are values: you can pass them around and store them in variables.
+Which reads a line from the console and wraps it in a `Containor<string?>`.  We pass the `Console.ReadLine` method as a delegate to the `Read` method. Functions become first class citizens.  They are values: you can pass them around and store them in variables.  In *FP* functions and values are interchangeable.
 
 With this new I/O, we can write this simple console app:
 
@@ -107,6 +110,22 @@ Containor
     .Write<string?>(Console.WriteLine);
 ```
 
+`Containor.Read(Console.ReadLine)` is a little clumsy, so we can write an extension method.  However, in this case we can't: we're dealing with a static class `Console`.  Instead, we can write a static method in a new static class:
+
+```csharp
+public static class ConsoleReader
+{
+       public static Containor<string?> ReadLine()
+        => Containor.Read(Console.ReadLine());
+}
+```
+
+And our app becomes succinct but very clear about what it's doing:
+
+```csharp
+ConsoleReader.ReadLine
+    .Write<string?>(Console.WriteLine);
+```
 
 That's it for this article.
 
