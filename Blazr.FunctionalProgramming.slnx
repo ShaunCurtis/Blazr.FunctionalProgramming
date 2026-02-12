@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/Documents/">
+    <File Path="Documents/Monad.md" />
     <File Path="Documents/Part1-Introduction.md" />
     <File Path="Documents/Part2-Fundimentals.md" />
     <File Path="Documents/Part3-Containors.md" />
@@ -13,4 +14,6 @@
     <File Path="Readme.md" />
   </Folder>
   <Project Path="Blazr.FunctionalProgramming/Blazr.FunctionalProgramming.csproj" />
+  <Project Path="Blazr.Monad/Blazr.Monad.csproj" Id="7915ee17-497e-42cb-b0f7-a25369ae943a" />
+  <Project Path="Blazr.Result/Blazr.ResultMonad.csproj" Id="ebad0681-8888-470a-a478-e46e153901d2" />
 </Solution>
