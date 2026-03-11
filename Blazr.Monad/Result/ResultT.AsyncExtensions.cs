@@ -3,11 +3,21 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-
-namespace Blazr.Monad;
+namespace Blazr.Manganese;
 
 public static class ResultTAsyncExtensions
 {
+    extension<T>(Task<Result<T>> @this)
+    {
+        public async Task<T> WriteAsync(T failureValue)
+            => (await @this.ContinueWith(CheckForTaskException))
+                .Write(failureValue);
+
+        public async Task MatchAsync(Action<T>? success = null, Action<Exception>? failure = null)
+            => (await @this.ContinueWith(CheckForTaskException))
+                .Match(success, failure);
+    }
+
     extension<T, TOut>(Result<T> @this)
     {
         public async Task<Result<TOut>> BindAsync(Func<T, Task<Result<TOut>>> function)
@@ -45,11 +55,7 @@ public static class ResultTAsyncExtensions
             => (await @this.ContinueWith(CheckForTaskException))
                 .Map<T, TOut>(function);
 
-        public async Task<T> WriteAsync(T failureValue)
-            => (await @this.ContinueWith(CheckForTaskException))
-                .Write(failureValue);
-
-        public async Task WriteAsync(Action<T> success, Action<Exception> failure)
+        public async Task<TOut> WriteAsync(Func<T, TOut> success, Func<Exception, TOut> failure)
             => (await @this.ContinueWith(CheckForTaskException))
                 .Write(success, failure);
     }

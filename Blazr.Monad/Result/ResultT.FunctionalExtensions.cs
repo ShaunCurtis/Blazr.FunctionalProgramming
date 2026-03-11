@@ -3,8 +3,7 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-
-namespace Blazr.Monad;
+namespace Blazr.Manganese;
 
 public static class ResultFunctionalExtensions
 {
@@ -39,6 +38,14 @@ public static class ResultFunctionalExtensions
             }
         }
 
+        public TOut Write<TOut>(Func<T, TOut> success, Func<Exception, TOut> failure)
+            => @this switch
+            {
+                SuccessResult<T> s => success.Invoke(s.Value),
+                FailureResult<T> f => failure.Invoke(f.Exception),
+                _ => throw new NotImplementedException("Result Object type is undefined.")
+            };
+
         public T Write(T failureValue)
             => @this switch
             {
@@ -46,9 +53,25 @@ public static class ResultFunctionalExtensions
                 FailureResult<T> f => failureValue,
                 _ => throw new NotImplementedException("Result Object type is undefined.")
             };
+
+        public Result ToResult() =>
+            @this is FailureResult<T> f ?  Result.Failed(f.Exception.Message) : Result.Succeeded;
     }
 
-    public static Result<T> ToResult<T>(this T value) =>
-        value is null ? new SuccessResult<T>(value) : new FailureResult<T>(ResultException.Null);
+    /// <summary>
+    /// Adds a Conversion Extension method to any type that will convert it to a Result of that type.  
+    /// If the value is null, it will return a FailureResult with a Null Exception
+    /// , otherwise it will return a SuccessResult with the value.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="this"></param>
+    extension<T>(T @this)
+    {
+        public Result<T> ToResultT =>
+            @this is not null ? new SuccessResult<T>(@this) : new FailureResult<T>(ResultException.Null);
+
+        public Result ToResult =>
+            @this is not null ? Result.Succeeded :Result.Failed("Value was Null.");
+    }
 }
 

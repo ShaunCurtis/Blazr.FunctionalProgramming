@@ -3,8 +3,7 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-
-namespace Blazr.Monad;
+namespace Blazr.Manganese;
 
 public static class ResultTMonadExtensions
 {
@@ -16,7 +15,7 @@ public static class ResultTMonadExtensions
             {
                 return @this switch
                 {
-                    SuccessResult<T> hv => ResultT.Read(func.Invoke(hv.Value)),
+                    SuccessResult<T> hv => ResultT.Read<TResult>(func.Invoke(hv.Value)),
                     _ => new FailureResult<TResult>(ResultException.Null)
                 };
             }
@@ -26,17 +25,19 @@ public static class ResultTMonadExtensions
             }
         }
 
-        public void Match(Action<T> success, Action<Exception> failure)
+        public Result<T> Match(Action<T>? success = null, Action<Exception>? failure = null)
         {
             switch (@this)
             {
                 case SuccessResult<T> s:
-                    success.Invoke(s.Value);
+                    success?.Invoke(s.Value);
                     break;
                 case FailureResult<T> f:
-                    failure.Invoke(f.Exception);
+                    failure?.Invoke(f.Exception);
                     break;
             }
+
+            return @this;
         }
 
         public Result<TResult> Bind<TResult>(Func<T, Result<TResult>> func)
@@ -46,22 +47,6 @@ public static class ResultTMonadExtensions
                 FailureResult<T> f => new FailureResult<TResult>(f.Exception),
                 _ => new FailureResult<TResult>(ResultException.Null)
             };
-
-        public Result<TResult> Bind<TResult>(Func<T, TResult> func)
-        {
-            try
-            {
-                if (@this is FailureResult<T> f)
-                    return new FailureResult<TResult>(f.Exception);
-
-                var previousSuccessValue = ((SuccessResult<T>)@this).Value;
-                return func(previousSuccessValue).ToResult();
-            }
-            catch (Exception e)
-            {
-                return new FailureResult<TResult>(e);
-            }
-        }
     }
 }
 

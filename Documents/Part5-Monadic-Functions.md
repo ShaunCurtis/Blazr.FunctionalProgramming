@@ -5,45 +5,46 @@ We are now ready to address the *Monad Enigma*.
 In coding a *Monadic Function* is a function with the following pattern:
 
 ```csharp
-Containor<TOut> Bind(Func<T, Containor<TOut>> func)
-```
-In the single state `Containor` object context it can be coded like this:
-
-```csharp
-public Containor<TOut> Bind<TOut>(Func<T, Containor<TOut>> func)
-    => func.Invoke(this.Value);
-```
-In the two state `NullableContainor` object context it can be coded like this:
-
-```csharp
-public NullableContainor<TOut> Bind<TOut>(Func<T, NullableContainor<TOut>> func)
-    => HasValue 
-        ? func.Invoke(Value) 
-        : new NullableContainor<TOut> { HasValue = false };
+Monad<TOut> Bind(Func<T, Monad<TOut>> func)
 ```
 
-In the previous article I addressed the `double.Parse` issue with `TryMap.`  This works, but it generates costly exceptions.  `double.TryParse` is more efficient, but a horrible bit of code, spouting results at both ends.  One solution is to wrap it in a *Manadic Function* like this:
+Note the standard practicein calling the method `Bind`.
+
+In the single state `Container` object context it can be coded like this:
 
 ```csharp
-static NullableContainor<double> TryParseToDouble(string? value)
+public static class ContainerFunctionalExtensions
 {
-    if (double.TryParse(value, out double result))
-        return NullableContainor.Read(result);
+    extension<T>(Container<T> @this)
+    {
+        public Container<TResult> Bind<TResult>(Func<T, Container<TResult>> func)
+            => func.Invoke(@this.Value);
 
-    return NullableContainor.NoValue<double>();
+        //,, more methods
+    }
 }
 ```
 
-This now handles the nullable input string and wraps the `TryParse` more elegantly.
-
-The console app:
+We can write a new parsing method:
 
 ```csharp
-NullableContainor.Read(Console.ReadLine)
+Container<double> TryParseToDouble(string? value)
+    => double.TryParse(value, out double result)
+        ? result.Containerize
+        : (0d).Containerize;
+```
+
+And refactor our app:
+
+```csharp
+Console.ReadLine()
+    .Containerize
     .Bind(TryParseToDouble)
     .Map(Math.Sqrt)
     .Map(value => Math.Round(value, 2))
-    .Write(Console.WriteLine);
+    .Write(Console.Write);
 ```
 
-That's it, really.  `Nullable<T>` is a *Monad*: it implements the *Monadic Function* pattern.  The pattern unwraps a lot of powerful coding options, that you will learn later.
+That's it.  `Container<T>` is a *Monad*: it implements the *Monadic Function* pattern.  The pattern unwraps a lot of powerful coding options, that you will learn later.
+
+However, `Container` is a single state container and has no mechanism for handling failure.  To do that we need to mov to the `Result` Monad.  Read on. 

@@ -3,14 +3,26 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-
-namespace Blazr.Monad;
+namespace Blazr.Manganese;
 
 public static class ResultT
 {
     public static Result<T> Read<T>(T? value)
-         => value is null ? new SuccessResult<T>(value!) : new FailureResult<T>(ResultException.Null);
+         => value is not null ? new SuccessResult<T>(value!) : new FailureResult<T>(ResultException.Null);
+
+    public static Result<T> Read<T>(T? value, Exception exception)
+         => value is not null ? new SuccessResult<T>(value!) : new FailureResult<T>(exception);
+
+    public static Result<T> Read<T>(T? value, string exceptionMessage)
+         => value is not null ? new SuccessResult<T>(value!) : new FailureResult<T>(ResultException.Create(exceptionMessage));
+
     public static Result<T> Read<T>(Exception exception)
+         => new FailureResult<T>(exception);
+    
+    public static Result<T> Fail<T>(string message)
+         => new FailureResult<T>(ResultException.Create(message));
+
+    public static Result<T> Fail<T>(Exception exception)
          => new FailureResult<T>(exception);
 
     public static Result<T> Read<T>(Func<T> func)

@@ -1,0 +1,231 @@
+# `Result<T>` - A Multistate Container
+
+In Parts 1 through to 5 you learnt about *Containers*, *Monads* and *Functors* and how to build a simple *Container* that implemented the *Monad* and *Functor* patterns.
+
+In this article I'll demostrate how to build a fully functional multistate *container* with synchronous and asynchronous extensions.
+
+It's called `Result<T>` and handles both:
+
+1. Nullable value of `T`. 
+1. Errors/Exceptions.
+
+It provides a path to flow errors and exceptions from input to output: it's ideal for data data pipelines.
+
+## The Demo Project
+
+This is basically the same as the other articles.
+
+The starting point is:
+
+```csharp
+var input = Console.ReadLine();
+
+if (input is null)
+    Console.WriteLine("You must enter a value.");
+
+if (double.TryParse(input, out double value))
+{
+    value = Math.Sqrt(value);
+    value = double.Round(value, 2);
+
+    Console.WriteLine($"The square root of {input} is {value}.");
+}
+else
+{
+    Console.WriteLine("The value entered was not a number.");
+}
+```
+
+There are three possible three states:
+
+1. Value
+2. Null
+3. Exception
+
+We can compress this to two states using a custom exception for the Null state, which gives us two states:
+
+1. Success
+1. Failure
+
+### ResultException
+
+First we need the custom result exception:
+
+```csharp
+public class ResultException : Exception
+{
+    public ResultException(string message)
+        : base(message) { }
+
+    public static ResultException Create(string message) => new ResultException(message);
+    public static ResultException Null => new ResultException("The input value was null");
+}
+```
+
+### `Result<T>`
+
+`ResultT` uses the discriminated union pattern to define the two states.  It's an abstract record with two derived records: `SuccessResult<T>` and `FailureResult<T>`.  This is a common pattern in *FP* languages, but not so common in C#.  It provides a clean way to define the two states and their associated data.  
+
+There's no need for a state properties, as the type of the record indicates whether it's a success or failure.  The `SuccessResult<T>` record contains the value of type `T`, while the `FailureResult<T>` record contains an exception.
+
+There's also no need for nullables, as the type system ensures that the value is always present in a `SuccessResult<T>` and the exception is always present in a `FailureResult<T>`.  This eliminates the possibility of null reference exceptions and makes the code safer and more robust.
+
+The abstract base object:
+
+```csharp
+public abstract record Result<T> { }
+```
+
+And two *State* objects:
+
+```csharp
+public record SuccessResult<T>(T Value) : Result<T>;
+public record FailureResult<T>(Exception Exception) : Result<T>;
+```
+
+#### Constructors
+
+While you can use `new` to create one of the state objects, we can provide some alternative logical constructors.
+
+All these are defined in the `ResultT` static class.
+
+Here are some examples:
+
+```csharp
+public static Result<T> Read<T>(T? value)
+        => value is not null ? new SuccessResult<T>(value!) : new FailureResult<T>(ResultException.Null);
+```
+
+```csharp
+public static Result<T> Read<T>(T? value, string exceptionMessage)
+        => value is not null ? new SuccessResult<T>(value!) : new FailureResult<T>(ResultException.Create(exceptionMessage));
+```
+
+```csharp
+public static Result<T> Read<T>(Func<T> func)
+{
+    try
+    {
+        var value = func.Invoke();
+        return value is null ? new SuccessResult<T>(value!) : new FailureResult<T>(ResultException.Null);
+    }
+    catch (Exception e)
+    {
+        return new FailureResult<T>(e);
+    }
+}
+```
+
+```csharp
+public static Result<T> Fail<T>(string message)
+        => new FailureResult<T>(ResultException.Create(message));
+```
+
+*ResultT.Static.cs* contains the full set.
+
+#### Write
+
+Writes, outputtting a result are defined in the `ResultFunctionalExtensions` static class.
+
+There are three:
+1. Outputs a `T` or a provided `T` if *failed*.
+2. Calls provided *Actions* depending on the state.
+3. Outputs a `TOut` by calling the provided *Funcs* depending on the state.
+```csharp
+public static class ResultFunctionalExtensions
+{
+    extension<T>(Result<T> @this)
+    {
+        public T Write(T failureValue)
+            => @this switch
+            {
+                SuccessResult<T> s => s.Value,
+                FailureResult<T> f => failureValue,
+                _ => throw new NotImplementedException("Result Object type is undefined.")
+            };
+
+        public void Write(Action<T> success, Action<Exception> failure)
+        {
+            switch (@this)
+            {
+                case SuccessResult<T> s:
+                    success.Invoke(s.Value);
+                    break;
+                case FailureResult<T> f:
+                    failure.Invoke(f.Exception);
+                    break;
+            }
+        }
+
+        public TOut Write<TOut>(Func<T, TOut> success, Func<Exception, TOut> failure)
+            => @this switch
+            {
+                SuccessResult<T> s => success.Invoke(s.Value),
+                FailureResult<T> f => failure.Invoke(f.Exception),
+                _ => throw new NotImplementedException("Result Object type is undefined.")
+            };
+    }
+```
+
+### Map/Bind
+
+These are defined in `ResultTMonadExtensions`.  They use type *pattern matching*.
+
+```csharp
+public static class ResultTMonadExtensions
+{
+    extension<T>(Result<T> @this)
+    {
+        public Result<TResult> Map<TResult>(Func<T, TResult> func)
+        {
+            try
+            {
+                return @this switch
+                {
+                    SuccessResult<T> hv => ResultT.Read(func.Invoke(hv.Value)),
+                    _ => new FailureResult<TResult>(ResultException.Null)
+                };
+            }
+            catch (Exception e)
+            {
+                return new FailureResult<TResult>(e);
+            }
+        }
+
+        public Result<TResult> Bind<TResult>(Func<T, Result<TResult>> func)
+            => @this switch
+            {
+                SuccessResult<T> s => func.Invoke(s.Value),
+                FailureResult<T> f => new FailureResult<TResult>(f.Exception),
+                _ => new FailureResult<TResult>(ResultException.Null)
+            };
+    }
+}
+```
+
+### Match
+
+Finally a new pattern you may not have yet met - `Match` - similar to `Write` but passes through the `Result<T>` object. 
+
+```csharp
+public static class ResultTMonadExtensions
+{
+    extension<T>(Result<T> @this)
+    {
+        public Result<T> Match(Action<T>? success = null, Action<Exception>? failure = null)
+        {
+            switch (@this)
+            {
+                case SuccessResult<T> s:
+                    success?.Invoke(s.Value);
+                    break;
+                case FailureResult<T> f:
+                    failure?.Invoke(f.Exception);
+                    break;
+            }
+
+            return @this;
+        }
+    }
+}
+```
