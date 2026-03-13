@@ -8,7 +8,7 @@ In coding a *Monadic Function* is a function with the following pattern:
 Monad<TOut> Bind(Func<T, Monad<TOut>> func)
 ```
 
-Note the standard practicein calling the method `Bind`.
+It's standard practice (but not compulsory) to call the method `Bind`. 
 
 In the single state `Container` object context it can be coded like this:
 
@@ -25,7 +25,7 @@ public static class ContainerFunctionalExtensions
 }
 ```
 
-We can write a new parsing method:
+We can now write a new parsing method that returns a `Container<double>`:
 
 ```csharp
 Container<double> TryParseToDouble(string? value)
@@ -45,6 +45,8 @@ Console.ReadLine()
     .Write(Console.Write);
 ```
 
-That's it.  `Container<T>` is a *Monad*: it implements the *Monadic Function* pattern.  The pattern unwraps a lot of powerful coding options, that you will learn later.
+That's it.  `Container<T>` is now a *Monad*: it implements the *Monadic Function* pattern.  The pattern unwraps a lot of powerful coding options, that you will learn later.
 
-However, `Container` is a single state container and has no mechanism for handling failure.  To do that we need to mov to the `Result` Monad.  Read on. 
+There is however a major issue with the whole app.  `Container` has a single state: it has no mechanism for elegantly handling failure.  You can see workarounds in the code.
+
+The next article introduces you to the two state `Result` Monad.

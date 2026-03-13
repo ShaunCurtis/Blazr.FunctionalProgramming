@@ -8,9 +8,9 @@ Each article is short and focused on a specific topic, making it easy to follow 
 
 [Part 1: Introduction to Functional Programming](./Documents/Part1-Introduction.md)
 
-[Part 2: Fundimentals](./Documents/Part3-Fundimentals.md)
+[Part 2: Fundimentals](./Documents/Part2-Fundimentals.md)
 
-[Part 3: Containers](./Documents/Part3-Containors.md)
+[Part 3: Containers](./Documents/Part3-Containers.md)
  
 [Part 4: Functors](./Documents/Part4-Functors.md)
 
@@ -20,7 +20,7 @@ Each article is short and focused on a specific topic, making it easy to follow 
 
 [Part 7: ResultT Async](Documents/Part7-ResultTAsync.md)
 
-[Part 5: Extensions](Documents/Part5-Extensions.md)
+[Part 8: Extensions](Documents/Part8-Extensions.md)
 
 
 

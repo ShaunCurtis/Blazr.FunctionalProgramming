@@ -1,19 +1,17 @@
 # `Result<T>` - A Multistate Container
 
-In Parts 1 through to 5 you learnt about *Containers*, *Monads* and *Functors* and how to build a simple *Container* that implemented the *Monad* and *Functor* patterns.
+In Parts 1 through to 5 you learnt about *Containers*, *Monads* and *Functors* and how to build a simple *Container* that implements the *Monad* and *Functor* patterns.
 
 In this article I'll demonstrate how to build a fully functional multistate *container*.
 
 It's called `Result<T>` and handles both:
 
-1. Nullable value of `T`. 
-1. Errors/Exceptions.
+1. A Nullable value of `T`. 
+1. Exceptions.
 
-It provides a path to flow errors and exceptions from input to output: it's ideal for data data pipelines.
+It provides a mechanism to flow errors and exceptions from input to output: ideal for data pipelines.
 
 ## The Demo Project
-
-This is basically the same as the other articles.
 
 The starting point is:
 
@@ -28,7 +26,7 @@ if (double.TryParse(input, out double value))
     value = Math.Sqrt(value);
     value = double.Round(value, 2);
 
-    Console.WriteLine($"The square root of {input} is {value}.");
+    Console.WriteLine($"The square root is {value}.");
 }
 else
 {
@@ -36,13 +34,13 @@ else
 }
 ```
 
-There are three possible three states:
+There are three possible states:
 
 1. Value
 2. Null
 3. Exception
 
-We can compress this to two states using a custom exception for the Null state, which gives us two states:
+We can compress this into two states using a custom exception to represent the Null state:
 
 1. Success
 1. Failure
@@ -66,9 +64,9 @@ public class ResultException : Exception
 
 `ResultT` uses the discriminated union pattern to define the two states.  It's an abstract record with two derived records: `SuccessResult<T>` and `FailureResult<T>`.  This is a common pattern in *FP* languages, but not so common in C#.  It provides a clean way to define the two states and their associated data.  
 
-There's no need for a state properties, as the type of the record indicates whether it's a success or failure.  The `SuccessResult<T>` record contains the value of type `T`, while the `FailureResult<T>` record contains an exception.
+There's no need for state properties, as the type of the record indicates whether it's a success or failure.  The `SuccessResult<T>` record contains the value of type `T`, while the `FailureResult<T>` record contains an exception.
 
-There's also no need for nullables, as the type system ensures that the value is always present in a `SuccessResult<T>` and the exception is always present in a `FailureResult<T>`.  This eliminates the possibility of null reference exceptions and makes the code safer and more robust.
+There's also no need for nullables, as the type system ensures that the value is always present in a `SuccessResult<T>` and the exception is always present in a `FailureResult<T>`.  We eliminate the possibility of null reference exceptions which makes our code safer and more robust.
 
 The abstract base object:
 
@@ -85,21 +83,25 @@ public record FailureResult<T>(Exception Exception) : Result<T>;
 
 #### Constructors
 
-While you can use `new` to create one of the state objects, we can provide some alternative logical constructors.
+It's OK to use `new` to create one of the state objects, but we need some alternative functional style constructors.  All these are defined in the `ResultT` static class.
 
-All these are defined in the `ResultT` static class.
+Some examples:
 
-Here are some examples:
+Accepting a Nullable `T` and creating the correct object type:
 
 ```csharp
 public static Result<T> Read<T>(T? value)
         => value is not null ? new SuccessResult<T>(value!) : new FailureResult<T>(ResultException.Null);
 ```
 
+Accepting a Nullable `T` and a custom error message:
+
 ```csharp
 public static Result<T> Read<T>(T? value, string exceptionMessage)
         => value is not null ? new SuccessResult<T>(value!) : new FailureResult<T>(ResultException.Create(exceptionMessage));
 ```
+
+Accepting a `Func<T>`:
 
 ```csharp
 public static Result<T> Read<T>(Func<T> func)
@@ -116,6 +118,8 @@ public static Result<T> Read<T>(Func<T> func)
 }
 ```
 
+Failure with a custom message:
+
 ```csharp
 public static Result<T> Fail<T>(string message)
         => new FailureResult<T>(ResultException.Create(message));
@@ -125,12 +129,13 @@ public static Result<T> Fail<T>(string message)
 
 #### Write
 
-Writes, outputtting a result are defined in the `ResultFunctionalExtensions` static class.
+Writes, outputting a result, are defined in the `ResultFunctionalExtensions` static class.
 
 There are three:
-1. Outputs a `T` or a provided `T` if *failed*.
-2. Calls provided *Actions* depending on the state.
-3. Outputs a `TOut` by calling the provided *Funcs* depending on the state.
+1. Outputs a `T` or a provided  `T failureValue` if *failed*.
+2. Calls provided *Action*s depending on state.
+3. Outputs a `TOut` by calling the provided *Func*s depending on state.
+
 ```csharp
 public static class ResultFunctionalExtensions
 {
@@ -232,7 +237,7 @@ public static class ResultTMonadExtensions
 
 ## App
 
-First we need a *Monadic Function* to do the parsing.  This is more efficient that using `Double.Parse` and capturing the exception. 
+First we need a *Monadic Function* to do the parsing using `TryParse`.  This is more efficient that using `Double.Parse` and capturing the exception. 
 
 ```csharp
 public static Result<double> ParseInputToDouble(string? Value)
