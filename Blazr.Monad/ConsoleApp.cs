@@ -1,7 +1,8 @@
-﻿using Blazr.Manganese;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿/// ============================================================
+/// Author: Shaun Curtis, Cold Elm Coders
+/// License: Use And Donate
+/// If you use it, donate something to a charity somewhere
+/// ============================================================
 
 namespace Blazr.Monad;
 
@@ -71,6 +72,56 @@ public static class ConsoleApp
         => double.TryParse(value, out double result)
             ? result.Containerize
             : (0d).Containerize;
+
+    public static void Result_V1()
+    {
+        Console.WriteLine(
+            Console.ReadLine()
+            .ToResultT
+            .Bind(ConsoleApp.ParseInputToDouble)
+            .Map(Math.Sqrt)
+            .Map(value => Math.Round(value, 2))
+            .Write(
+                success: value => $"The result is: {value}",
+                failure: exception => $"An error occured: {exception.Message}")
+            );
+    }
+
+    public static async Task AsyncResult_V1()
+    {
+        Console.WriteLine(
+            await DataProvider.GetDataAsync()
+              .MapAsync(Math.Sqrt)
+              .MapAsync(value => Math.Round(value, 2))
+                .WriteAsync(
+                    success: value => $"The result is: {value}",
+                    failure: exception => $"An error occured: {exception.Message}")
+        );
+    }
+
+
+    public static async Task AsyncResult_V2()
+    {
+        var result = await DataProvider.GetDataAsync();
+
+        Console.Write(
+            result
+              .Map(Math.Sqrt)
+              .Map(value => Math.Round(value, 2))
+              .Write(
+                  success: value => $"The result is: {value}",
+                  failure: exception => $"An error occured: {exception.Message}")
+      );
+    }
+
+}
+public static class DataProvider
+{
+    public static async Task<Result<double>> GetDataAsync()
+    {
+        await Task.Delay(2000); // Simulate async data fetching
+        return ResultT.Read((double)Random.Shared.Next(2, 100));
+    }
 }
 
 

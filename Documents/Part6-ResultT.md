@@ -2,7 +2,7 @@
 
 In Parts 1 through to 5 you learnt about *Containers*, *Monads* and *Functors* and how to build a simple *Container* that implemented the *Monad* and *Functor* patterns.
 
-In this article I'll demostrate how to build a fully functional multistate *container* with synchronous and asynchronous extensions.
+In this article I'll demonstrate how to build a fully functional multistate *container*.
 
 It's called `Result<T>` and handles both:
 
@@ -228,4 +228,39 @@ public static class ResultTMonadExtensions
         }
     }
 }
+```
+
+## App
+
+First we need a *Monadic Function* to do the parsing.  This is more efficient that using `Double.Parse` and capturing the exception. 
+
+```csharp
+public static Result<double> ParseInputToDouble(string? Value)
+{
+    if (double.TryParse(Value, out double value))
+    {
+        value = Math.Sqrt(value);
+        value = double.Round(value, 2);
+        return ResultT.Read(value);
+    }
+    else
+    {
+        return ResultT.Fail<double>("The value entered was not a number.");
+    }
+}
+```
+
+And we can refactor the app:
+
+```csharp
+Console.WriteLine(
+    Console.ReadLine()
+    .ToResultT
+    .Bind(ConsoleApp.ParseInputToDouble)
+    .Map(Math.Sqrt)
+    .Map(value => Math.Round(value, 2))
+    .Write(
+        success: value => $"The result is: {value}",
+        failure: exception => $"An error occured: {exception.Message}")
+    );
 ```

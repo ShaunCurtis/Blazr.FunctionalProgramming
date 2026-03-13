@@ -1,14 +1,14 @@
 <Solution>
   <Folder Name="/Documents/">
-    <File Path="Documents/Monad.md" />
+    <File Path="Documents/Monads.md" />
     <File Path="Documents/Part1-Introduction.md" />
     <File Path="Documents/Part2-Fundimentals.md" />
     <File Path="Documents/Part3-Containers.md" />
     <File Path="Documents/Part4-Functors.md" />
     <File Path="Documents/Part5-Monadic-Functions.md" />
-    <File Path="Documents/Part6-Extensions.md" />
     <File Path="Documents/Part6-ResultT.md" />
-    <File Path="Documents/Part7- BoolTAsync.md" />
+    <File Path="Documents/Part7- ResultTAsync.md" />
+    <File Path="Documents/Part8-Extensions.md" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path="Readme.md" />

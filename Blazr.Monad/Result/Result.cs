@@ -5,7 +5,7 @@
 /// ============================================================
 using System.Diagnostics.CodeAnalysis;
 
-namespace Blazr.Manganese;
+namespace Blazr.Monad;
 
 public record Result
 {

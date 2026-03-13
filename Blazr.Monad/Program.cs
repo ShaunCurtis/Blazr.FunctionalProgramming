@@ -1,14 +1,10 @@
-﻿using Blazr.Manganese;
+﻿/// ============================================================
+/// Author: Shaun Curtis, Cold Elm Coders
+/// License: Use And Donate
+/// If you use it, donate something to a charity somewhere
+/// ============================================================
+
 using Blazr.Monad;
 using System;
 
-Console.WriteLine( 
-    Console.ReadLine()
-    .ToResultT
-    .Bind(ConsoleApp.ParseInputToDouble)
-    .Map(Math.Sqrt)
-    .Map(value => Math.Round(value, 2))
-    .Write(
-        success: value => $"The result is: {value}",
-        failure: exception =>  $"An error occured: {exception.Message}")
-    );
+await ConsoleApp.AsyncResult_V2();

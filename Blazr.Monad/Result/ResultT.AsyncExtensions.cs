@@ -3,7 +3,7 @@
 /// License: Use And Donate
 /// If you use it, donate something to a charity somewhere
 /// ============================================================
-namespace Blazr.Manganese;
+namespace Blazr.Monad;
 
 public static class ResultTAsyncExtensions
 {
@@ -13,7 +13,7 @@ public static class ResultTAsyncExtensions
             => (await @this.ContinueWith(CheckForTaskException))
                 .Write(failureValue);
 
-        public async Task MatchAsync(Action<T>? success = null, Action<Exception>? failure = null)
+        public async Task<Result<T>> MatchAsync(Action<T>? success = null, Action<Exception>? failure = null)
             => (await @this.ContinueWith(CheckForTaskException))
                 .Match(success, failure);
     }
