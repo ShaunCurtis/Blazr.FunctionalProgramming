@@ -4,7 +4,7 @@ This series of articles is about applying *Functional Programming* principles to
 
 Let's start with a reality check.
 
-> You won't switch from an *OOP* to a *FP* programming paradigm in a day, a month, or even a year.  If you continue using C# you'll never switch totally.
+> You won't switch from an *Imperative* to a *FP* programming paradigm in a day, a month, or even a year.  If you continue using C# you'll never switch totally.
 
 So why start?  What's the point?
 

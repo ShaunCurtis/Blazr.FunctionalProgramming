@@ -1,12 +1,12 @@
 #  Monads in C#
 
-Programing ia becoming more *Functional*.  Mainstream languages are aging.  The functional paradigm is a better fit with today's distributed systems architecture.
+Programing is becoming more *Functional*.  Mainstream languages are aging.  The functional paradigm is a better fit in many of today's distributed systems architecture.
 
-*Functional* dictates a good understanding of Monad.
+*Functional* dictates a good understanding of the *Monad Pattern*.  You don't need to understand the maths, just the principles.
 
-You will probably use a functional progamming library, rather than building one from scratch, but to you need to understand the *Monad Pattern* to use them effectively.
+While you will almost certainly use a functional progamming library, rather than building your own, you will need to understand the *Monad Pattern* to use it effectively.
 
-Before talking monads, let's step back and consider this simple console app written in the classic imperative style:
+Before we talk monads, let's step back and consider this simple console app written in the classic imperative style:
 
 ```csharp
 var input = Console.ReadLine();
@@ -24,9 +24,9 @@ else
 My issues with this code are:
 
 1. The main logic of transforming the input value is buried inside lots of implementation detail.  
-1. There are two pathways depending on whether the input is valid or not.  This leads to nested code and lots of defensive programming.
+1. There are two pathways depending on whether the input is valid or not.  This leads to nested code with lots of defensive programming.
 
-Consider a more explicit implementation:
+Consider this more explicit implementation:
 
 ```csharp
 Console.ReadLine()
@@ -36,7 +36,7 @@ Console.ReadLine()
     .Then(WriteToConsole);
 ```
 
-Now we can see exactly what's going on.  `Then` provides a way to chain operations together.  Each step is testable.
+We can see exactly what's going on.  `Then` provides a way to chain operations together.  Each step is testable.
 
 We can code this:
 
@@ -76,7 +76,7 @@ This works, but has issues:
 
 ## The Container Pattern
 
-First, we forget about failure handling and just focus on chaining.
+Forget about failure handling initially, and just focus on chaining.
 
 The **Container Pattern**: wraps a value inside a generic object.  The basic pattern:
 
@@ -89,27 +89,31 @@ You should recognize this:  `IEnumerable<T>`, `Task<T>`,....
 `Then` is implementated on the container.  Note the second `Then` has become `Write` - it's outputting data, not applying a `Tin -> TOut` function:
 
 ```csharp
-public Containor<TResult> Then<TResult>(Func<T, TResult> func)
+public Container<TResult> Then<TResult>(Func<T, TResult> func)
     => new Container<TResult>(func.Invoke(Value));
 
 public void Write(Action<T> action)
     => action.Invoke(Value);
 ```
 
-And a static helper class added to create containers:
+And a static helper class to create containers:
 
 ```csharp
 public static class Container
 {
-    public static Container<T> Read<T>(Func<T> func)
+    extension<T>(T @this)
+    {
+        public Container<T> Containerize
         => new Container<T>(func.Invoke());
+    }
 }
 ```
 
 We can now rewrite our top level code as:
 
 ```csharp
-Container.Read(Console.ReadLine)
+Console.ReadLine
+    .Containerize
     .Then(ConvertToDouble)
     .Then(Square)
     .Then(RoundToTwoDecimalPlaces)
@@ -118,7 +122,7 @@ Container.Read(Console.ReadLine)
 
 ## Handling Failure
 
-In the above example, if `ConvertToDouble` fails, it throws an exception which will crash the app.  `Container` doesn't handle this, but we can create a new type of container that does.
+In the above example, if `ConvertToDouble` fails, it throws an exception which will crash the app.  `Container` doesn't handle this, so we need a new type of container that does.
 
 First a base abstract object:
 
@@ -220,7 +224,7 @@ NullT.Read(Console.ReadLine)
 
 Much cleaner.  The main logic is now clear.
 
-Failure handling is now abstracted away into the `Result<T>` type.  No more defensive code in sight.  We have implemented the *Railway Orientated Programming* paradigm to handle failure.  Any failure in the chain causes all subsequent operations to be skipped.
+Failure handling is abstracted away into the `Result<T>` type.  No more defensive code in sight.  The solution implements the *Railway Orientated Programming* paradigm to handle failure.  Any failure in the chain causes all subsequent operations to be skipped.
 
 In classic functional programming terminology, this is a basic **Maybe Monad**.  `Then` is `Map`, and `Write` is `Match`.
 
@@ -287,18 +291,24 @@ Result.Read(Console.ReadLine)
 
 ### ToResultT
 
-We can add a global method to all objects like this:
+We can add a global property to all objects like this:
 
 ```csharp
-public static Result<T> ToResultT<T>(this T value) =>
-    value is null ? new SuccessResult<T>(value) : new FailureResult<T>(ResultException.Null);
+public static class ResultFunctionalExtensions
+{
+    extension<T>(T @this)
+    {
+        public Result<T> ToResultT =>
+            @this is not null ? new SuccessResult<T>(@this) : new FailureResult<T>(ResultException.Null);
+    }
+}
 ```
 
 And our app looks like this:
 
 ```csharp
 Console.ReadLine()
-    .ToResultT()
+    .ToResultT
     .Bind(StringToDouble)
     .Map(Square)
     .Map(RoundToTwoDecimalPlaces)
@@ -307,4 +317,6 @@ Console.ReadLine()
         failure: () => Console.WriteLine($"Failure: The value provided was not a number."));
 ```
 
+## Summary
 
+This is a quick tour through the two Monadic containers in my `Blazr.Manganese` library.  The library implementation are little different, the base objects are more screwed down, and they include *async* operations.  
