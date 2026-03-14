@@ -29,18 +29,9 @@ public static class ConsoleApp
     }
 
     public static Result<double> ParseInputToDouble(string? Value)
-    {
-        if (double.TryParse(Value, out double value))
-        {
-            value = Math.Sqrt(value);
-            value = double.Round(value, 2);
-            return ResultT.Read(value);
-        }
-        else
-        {
-            return ResultT.Fail<double>("The value entered was not a number.");
-        }
-    }
+        => double.TryParse(Value, out double value)
+            ? value.ToResultT
+            : ResultT.Fail<double>("The value entered was not a number.");
 
     public static void Container_V1()
     {

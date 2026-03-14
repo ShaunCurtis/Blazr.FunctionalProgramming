@@ -165,3 +165,5 @@ var result = await DataProvider.GetDataAsync();
             failure: exception => $"An error occured: {exception.Message}")
 );
 ```
+
+[Part 6 - ResultT](Part6-ResultT.md)

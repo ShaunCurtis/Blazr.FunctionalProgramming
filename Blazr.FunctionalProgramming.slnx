@@ -1,6 +1,8 @@
 <Solution>
+  <Folder Name="/Articles/">
+    <File Path="Articles/Monads.md" />
+  </Folder>
   <Folder Name="/Documents/">
-    <File Path="Documents/Monads.md" />
     <File Path="Documents/Part1-Introduction.md" />
     <File Path="Documents/Part2-Fundimentals.md" />
     <File Path="Documents/Part3-Containers.md" />

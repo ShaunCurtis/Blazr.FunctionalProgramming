@@ -2,17 +2,17 @@
 
 > A *Functor* is a higher order method that takes a `T => TOut` function as it's input.  
 
-The *container* applies the *functor* to it's internal value and returns a new *container* instance of `TOut`.  `Map`is the normal function name for a *Functor*.
+In the *Container* context, the *Functor* applies a function with the pattern `Func<T, TOut>` to it's internal `T` value and returns a new *Container* instance of `TOut`.  
 
-In the `Container` context it can be defined like this:
+This *Functor* is normally called `Map`.
 
 ```csharp
-public Containor<TOut> Map(Func<T, TOut> func);
+public Container<TOut> Map(Func<T, TOut> func);
 ```
 
-It maps a standard function, such as `Math.Sqrt(double)`.  `T` and `TOut` may be the same type.  Many of the functions we use or write fit this pattern.
+Many of the functions we use or write fit this pattern. Examples are `Double.Parse` and `Math.Sqrt(double)`.  Note that `T` and `TOut` may be the same type.  
 
-The `Map` implementation in the `Container` context:
+The `Map` implementation in the `Container` context is implemented as an extension method in the *ContainerFunctionalExtensions* static class :
 
 ```csharp
 public static class ContainerFunctionalExtensions
@@ -27,7 +27,7 @@ public static class ContainerFunctionalExtensions
 }
 ```
 
-And the console app using double.Parse:
+The console app using double.Parse now looks like this:
 
 ```csharp
 Console.ReadLine()
@@ -38,7 +38,7 @@ Console.ReadLine()
 
 Note the lambda expression to handle nullables.
 
-We can now *chain* computations like this:
+We can also now *chain* computations together like this:
 
 ```csharp
 Console.ReadLine()
@@ -50,3 +50,6 @@ Console.ReadLine()
 ```
 
 Next, *Monads*!.
+
+[Part 5 - Monadic Functions](Part5-Monadic-Functions.md)
+[Part 3 - Containers](Part3-Containers.md)

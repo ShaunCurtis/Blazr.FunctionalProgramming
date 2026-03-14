@@ -148,4 +148,7 @@ That's it for this article.
 
 Next, I'll show how to add more *FP* functionality to the `Containor`.
 
+[Part 2 - FP Fundimentals](Part2-Fundimentals.md)
+[Part 4 - Functors](Part4-Functors.md)
+
 

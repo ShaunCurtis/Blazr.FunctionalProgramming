@@ -50,3 +50,6 @@ That's it.  `Container<T>` is now a *Monad*: it implements the *Monadic Function
 There is however a major issue with the whole app.  `Container` has a single state: it has no mechanism for elegantly handling failure.  You can see workarounds in the code.
 
 The next article introduces you to the two state `Result` Monad.
+
+[Part 6 - ResultT](Part6-ResultT.md)
+[Part 4 - Functors](Part4-Functors.md)

@@ -49,6 +49,7 @@ Let's head to the shallow end and talk about *containers*.
  - [Functional Programming in C#](https://www.syntacticsugardaddy.com/blog/functional-programming-in-csharp)
 
 
+[Part 2 - FP Fundimentals](Part2-Fundimentals.md)
 
 
 

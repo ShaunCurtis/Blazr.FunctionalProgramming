@@ -62,11 +62,11 @@ public class ResultException : Exception
 
 ### `Result<T>`
 
-`ResultT` uses the discriminated union pattern to define the two states.  It's an abstract record with two derived records: `SuccessResult<T>` and `FailureResult<T>`.  This is a common pattern in *FP* languages, but not so common in C#.  It provides a clean way to define the two states and their associated data.  
+`ResultT` uses the discriminated union pattern to define the two states.  It's an abstract record with two derived records: `SuccessResult<T>` and `FailureResult<T>`.  This is a common pattern in *FP* languages, but not so in C#.  It provides a clean way to define the two states:  
 
-There's no need for state properties, as the type of the record indicates whether it's a success or failure.  The `SuccessResult<T>` record contains the value of type `T`, while the `FailureResult<T>` record contains an exception.
-
-There's also no need for nullables, as the type system ensures that the value is always present in a `SuccessResult<T>` and the exception is always present in a `FailureResult<T>`.  We eliminate the possibility of null reference exceptions which makes our code safer and more robust.
+1. Each state defines only the values it requires.
+1. State properties are not required: the type indicates success or failure.  `SuccessResult<T>` contains the value of type `T`, while `FailureResult<T>` contains an exception.
+1. No nullables: the type system ensures values are always present.  Code is safer and more robust.
 
 The abstract base object:
 
@@ -83,7 +83,8 @@ public record FailureResult<T>(Exception Exception) : Result<T>;
 
 #### Constructors
 
-It's OK to use `new` to create one of the state objects, but we need some alternative functional style constructors.  All these are defined in the `ResultT` static class.
+
+*Newing up* is OK, but a set of static `ResultT` constructors provide better ways. 
 
 Some examples:
 
@@ -132,7 +133,7 @@ public static Result<T> Fail<T>(string message)
 Writes, outputting a result, are defined in the `ResultFunctionalExtensions` static class.
 
 There are three:
-1. Outputs a `T` or a provided  `T failureValue` if *failed*.
+1. Outputs a `T` or a provided  `T failureValue` depending on state.
 2. Calls provided *Action*s depending on state.
 3. Outputs a `TOut` by calling the provided *Func*s depending on state.
 
@@ -174,7 +175,7 @@ public static class ResultFunctionalExtensions
 
 ### Map/Bind
 
-These are defined in `ResultTMonadExtensions`.  They use type *pattern matching*.
+These are defined in `ResultTMonadExtensions`.  They use type *pattern matching*.  `Map` captures any exceptions. 
 
 ```csharp
 public static class ResultTMonadExtensions
@@ -237,22 +238,13 @@ public static class ResultTMonadExtensions
 
 ## App
 
-First we need a *Monadic Function* to do the parsing using `TryParse`.  This is more efficient that using `Double.Parse` and capturing the exception. 
+Firstly, we need a *Monadic Function* to do the parsing using `TryParse`.  This is more efficient that using `Double.Parse` and capturing the exception. 
 
 ```csharp
 public static Result<double> ParseInputToDouble(string? Value)
-{
-    if (double.TryParse(Value, out double value))
-    {
-        value = Math.Sqrt(value);
-        value = double.Round(value, 2);
-        return ResultT.Read(value);
-    }
-    else
-    {
-        return ResultT.Fail<double>("The value entered was not a number.");
-    }
-}
+    => double.TryParse(Value, out double value)
+        ? value.ToResultT
+        : ResultT.Fail<double>("The value entered was not a number.");
 ```
 
 And we can refactor the app:
@@ -269,3 +261,13 @@ Console.WriteLine(
         failure: exception => $"An error occured: {exception.Message}")
     );
 ```
+
+## Next
+
+So far everything is synchonous.  However, modern I/O operations are asynchronous and revolve around `Task<T>`.  The next article shows how to add the necessary extension on to `ResultT` and `Task<T>`.
+
+[Part 7 - Async ResultT](Part7-ResultTAsync.md)
+[Part 5 - Monadic Functions](Part5-Monadic-Functions.md)
+
+
+
